@@ -10,6 +10,7 @@ public class LinkedList {
         Node(int ID) {
             this.ID = ID;
             this.next = null;
+            this.list = new LinkedList();
         }
     }
 
@@ -75,4 +76,32 @@ public class LinkedList {
         return false;
     }
 
+    public Node findNode(int ID) {
+        Node current = head;
+        while (current != null) {
+            if (current.ID == ID) {
+                return current;
+            }
+            current = current.next;
+        }
+        return null;
+    }
+
+    public int size() {
+        int count = 0;
+        Node current = head;
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+        return count;
+    }
+
+     public Node getHead() {
+        return head;
+    }
+
+    public void setHead(Node newHead) {
+        this.head = newHead;
+    }
 }
