@@ -1,8 +1,8 @@
 public class LinkedList {
-    private Node head;
+    private  Node head;
 
     // Node class
-    private static class Node {
+    protected static class Node { // changed to protected to allow access in registrationSystem class
         int ID;
         Node next;
         LinkedList list;
