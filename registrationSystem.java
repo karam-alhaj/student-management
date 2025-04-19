@@ -11,7 +11,40 @@ public class registrationSystem {
         lastStudentAdded = 0;
         lastCourseAdded = 0;
     }
-
+      public void addStudent(int studentID) {
+        // Add to the students list
+        studentsList.add(new LinkedList.Node(studentID));
+        lastStudentAdded = studentID;
+    }
+    public void addCourse(int courseID) {
+        // Add to the courses list
+        coursesList.add(new LinkedList.Node(courseID));
+        lastCourseAdded = courseID;
+    }
+    public void removeStudent(int studentID) {
+        studentsList.remove(studentID);
+        // remove 'studentID' for each course in coursesList
+        LinkedList.Node courseHead = coursesList.getHead();
+        while (courseHead != null) {
+        	courseHead.list.remove(studentID);  
+        	courseHead = courseHead.next;
+        }
+    }
+    public void removeCourse(int courseID) {
+        coursesList.remove(courseID);
+        // remove 'courseID' For each student in studentsList
+        LinkedList.Node studentHead = studentsList.getHead();
+        while (studentHead != null) {
+        	studentHead.list.remove(courseID);
+            studentHead = studentHead.next;
+        }
+    }
+    public int getLastStudentAdded() {
+        return lastStudentAdded;
+    }
+    public int getLastCourseAdded() {
+        return lastCourseAdded;
+    }
     public void listCoursesByStudent(int studentID) {
         LinkedList.Node studentNode = studentsList.findNode(studentID);
         if (studentNode != null) {
