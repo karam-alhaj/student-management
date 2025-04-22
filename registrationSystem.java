@@ -42,9 +42,12 @@ public class registrationSystem {
     public int getLastStudentAdded() {
         return lastStudentAdded;
     }
+
     public int getLastCourseAdded() {
         return lastCourseAdded;
     }
+
+    public 
     public void listCoursesByStudent(int studentID) {
         LinkedList.Node studentNode = studentsList.findNode(studentID);
         if (studentNode != null) {
