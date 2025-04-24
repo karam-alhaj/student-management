@@ -8,11 +8,18 @@ public class registrationSystem {
     public registrationSystem() {
         studentsList = new LinkedList();
         coursesList = new LinkedList();
-        lastStudentAdded = 0;
-        lastCourseAdded = 0;
+        lastStudentAdded = -1;
+        lastCourseAdded = -1;
+    }
+
+    public int getLastStudentAdded() {
+        return lastStudentAdded;
+    }
+    public int getLastCourseAdded() {
+        return lastCourseAdded;
     }
       public void addStudent(int studentID) {
-
+// Add to the students list
         studentsList.add(new LinkedList.Node(studentID));
         lastStudentAdded = studentID;
     }
@@ -39,15 +46,26 @@ public class registrationSystem {
             studentHead = studentHead.next;
         }
     }
-    public int getLastStudentAdded() {
-        return lastStudentAdded;
+    public void enrollStudent(int studentID, int courseID) {
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        if (studentNode != null && courseNode != null) {
+            studentNode.list.enroll(courseID, new LinkedList.Node(studentID));
+            courseNode.list.enroll(studentID, new LinkedList.Node(courseID));
+        } else {
+            System.out.println("Student or Course not found!");
+        }
     }
-
-    public int getLastCourseAdded() {
-        return lastCourseAdded;
+    public void removeEnrollment(int studentID, int courseID) {
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        if (studentNode != null && courseNode != null) {
+            studentNode.list.remove(courseID);
+            courseNode.list.remove(studentID);
+        } else {
+            System.out.println("Student or Course not found!");
+        }
     }
-
-    public
     public void listCoursesByStudent(int studentID) {
         LinkedList.Node studentNode = studentsList.findNode(studentID);
         if (studentNode != null) {
@@ -66,7 +84,6 @@ public class registrationSystem {
             System.out.println("Course not found!");
         }
     }
-
     private void SortLinkedList(LinkedList list) {
         if (list.getHead() == null) return;
         boolean swapped;
@@ -84,7 +101,6 @@ public class registrationSystem {
             }
         } while (swapped);
     }
-
     public void SortCoursesByID(int studentID) {
         LinkedList.Node studentNode = studentsList.findNode(studentID);
         if (studentNode != null) {
@@ -95,7 +111,6 @@ public class registrationSystem {
             System.out.println("Student not found!");
         }
     }
-
     public void SortStudentsByID(int courseID) {
         LinkedList.Node courseNode = coursesList.findNode(courseID);
         if (courseNode != null) {
@@ -106,7 +121,6 @@ public class registrationSystem {
             System.out.println("Course not found!");
         }
     }
-
     public boolean isFullCourse(int courseID) {
         LinkedList.Node courseNode = coursesList.findNode(courseID);
         if (courseNode != null) {
