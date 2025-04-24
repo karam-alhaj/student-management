@@ -12,7 +12,7 @@ public class registrationSystem {
         lastCourseAdded = 0;
     }
       public void addStudent(int studentID) {
-        // Add to the students list
+
         studentsList.add(new LinkedList.Node(studentID));
         lastStudentAdded = studentID;
     }
@@ -47,7 +47,7 @@ public class registrationSystem {
         return lastCourseAdded;
     }
 
-    public 
+    public
     public void listCoursesByStudent(int studentID) {
         LinkedList.Node studentNode = studentsList.findNode(studentID);
         if (studentNode != null) {
