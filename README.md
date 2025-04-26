@@ -148,16 +148,3 @@ boolean ok2 = system.isFullCourse(2001);    // false (<30 students)
 ```
 
 ---
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/YourFeature`)
-3. Commit changes with clear messages
-4. Push and open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License. See LICENSE for details.
