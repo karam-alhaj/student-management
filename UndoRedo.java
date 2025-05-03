@@ -10,6 +10,7 @@ public class UndoRedo {
     }
     public void undo(){
         String action = undoStack.pop();
+     System.out.println('Undo')
 
         switch (action) {
             case "add-student" -> // remove the last added student
@@ -32,6 +33,7 @@ public class UndoRedo {
     }
     public void redo(){
      String action = redoStack.pop();
+     System.out.println('Redo')
         switch (action) {
             case "add-studet" -> Main.system.addStudent(Main.system.getLastStudentRemoved());
             case "remove-student" -> Main.system.removeStudent(Main.system.getLastStudentAdded());
