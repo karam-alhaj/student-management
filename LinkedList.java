@@ -14,6 +14,19 @@ public class LinkedList {
         }
     }
 
+ public void add(int id) {
+        Node newNode = new Node(id);
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+    }
+
     // Add a new element to the end of the list
     public void add(Node newNode) {
         if (head == null) {
@@ -28,19 +41,28 @@ public class LinkedList {
     }
     
     public void enroll(int ID,Node node) {
+        
         Node current = head;
+        if (current == null) {
+            System.out.println("List is empty");
+
+        }else{
         while (current.ID != ID) {
             System.out.print(current.ID + " ");
             current = current.next;
         }
         current.list.add(node);
+        }
     }
     // Print all elements in the list
     public void printList() {
         Node current = head;
         while (current != null) {
-            System.out.print(current.ID + " ");
+            System.out.println(current.ID + " ");
+            System.out.println("Enrollments: ");
+            current.list.printList();
             current = current.next;
+
         }
         System.out.println();
     }
