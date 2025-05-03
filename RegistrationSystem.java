@@ -1,7 +1,3 @@
-import javax.sound.midi.MidiSystem;
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class RegistrationSystem {
 
     private LinkedList studentsList;
