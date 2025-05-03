@@ -1,3 +1,7 @@
+import javax.sound.midi.MidiSystem;
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class RegistrationSystem {
 
     private LinkedList studentsList;
@@ -11,8 +15,8 @@ public class RegistrationSystem {
     private int lastStudentAddedToCourse;
     private int lastStudentRemovedFromCourse;
 
-    private int lastCourseWithStudent; // New field to track the last course with a student
-    private int lastCourseRemoveStudent; // New field to track the last course with a student
+    private int lastCourseWithStudent;
+    private int lastCourseRemoveStudent;
 
     public RegistrationSystem() {
         studentsList = new LinkedList();
@@ -23,9 +27,165 @@ public class RegistrationSystem {
         lastCourseRemoved = -1;
         lastStudentAddedToCourse = -1;
         lastStudentRemovedFromCourse = -1;
-        lastCourseWithStudent = -1; // Initialize to -1
-        lastCourseRemoveStudent = -1; // Initialize to -1
+        lastCourseWithStudent = -1;
+        lastCourseRemoveStudent = -1;
     }
+
+    // Getters remain unchanged
+
+    public void addStudent(int studentID) {
+        studentsList.add(new LinkedList.Node(studentID));
+        lastStudentAdded = studentID;
+        System.out.println("Student added");
+        Main.undoRedo.addAction("add-student");
+    }
+
+    public void addCourse(int courseID) {
+        coursesList.add(new LinkedList.Node(courseID));
+        lastCourseAdded = courseID;
+        System.out.println("Course added");
+        Main.undoRedo.addAction("add-course");
+    }
+
+    public void removeStudent(int studentID) {
+        studentsList.remove(studentID);
+        lastStudentRemoved = studentID;
+        LinkedList.Node courseHead = coursesList.getHead();
+        while (courseHead != null) {
+            courseHead.list.remove(studentID);
+            courseHead = courseHead.next;
+        }
+        Main.undoRedo.addAction("remove-student");
+    }
+
+    public void removeCourse(int courseID) {
+        coursesList.remove(courseID);
+        lastCourseRemoved = courseID;
+        LinkedList.Node studentHead = studentsList.getHead();
+        while (studentHead != null) {
+            studentHead.list.remove(courseID);
+            studentHead = studentHead.next;
+        }
+        System.out.println("Course removed");
+        Main.undoRedo.addAction("remove-course");
+    }
+
+    public void enrollStudentToCourse(int studentID, int courseID) {
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        if (courseNode != null && studentNode != null) {
+            courseNode.list.add(new LinkedList.Node(studentID));
+            studentNode.list.add(new LinkedList.Node(courseID));
+            lastStudentAddedToCourse = studentID;
+            lastCourseWithStudent = courseID;
+            Main.undoRedo.addAction("enroll");
+            System.out.println("Student Enrolled");
+        } else {
+            System.out.println("Student or course not found in the system");
+        }
+    }
+
+    public void removeStudentFromCourse(int studentID, int courseID) {
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        if (courseNode != null && studentNode != null) {
+            courseNode.list.remove(studentID);
+            studentNode.list.remove(courseID);
+            lastStudentRemovedFromCourse = studentID;
+            lastCourseRemoveStudent = courseID;
+            System.out.println("Removed Student From Course");
+            Main.undoRedo.addAction("unenroll");
+        } else {
+            System.out.println("Course or student not found.");
+        }
+    }
+
+    public void listCoursesByStudent(int studentID) {
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        if (studentNode != null) {
+            System.out.println("Courses for student " + studentID + ":");
+            studentNode.list.printList();
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+
+    public void listStudentsByCourse(int courseID) {
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        if (courseNode != null) {
+            System.out.println("Students enrolled in course " + courseID + ":");
+            courseNode.list.printList();
+        } else {
+            System.out.println("Course not found!");
+        }
+    }
+
+    private void sortLinkedList(LinkedList list) {
+        if (list.getHead() == null || list.getHead().next == null) return;
+
+        boolean swapped;
+        do {
+            swapped = false;
+            LinkedList.Node prev = null;
+            LinkedList.Node curr = list.getHead();
+            LinkedList.Node next = curr.next;
+
+            while (next != null) {
+                if (curr.ID > next.ID) {
+                    // Swap curr and next nodes
+                    swapped = true;
+                    if (prev != null) {
+                        prev.next = next;
+                    } else {
+                        list.setHead(next);
+                    }
+                    curr.next = next.next;
+                    next.next = curr;
+
+                    // Update prev for next iteration
+                    prev = next;
+                    next = curr.next;
+                } else {
+                    prev = curr;
+                    curr = next;
+                    next = next.next;
+                }
+            }
+        } while (swapped);
+    }
+
+    public void sortCoursesByID(int studentID) {
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        if (studentNode != null) {
+            sortLinkedList(studentNode.list);
+            System.out.println("Courses sorted by ID for student " + studentID + ":");
+            studentNode.list.printList();
+        } else {
+            System.out.println("Student not found!");
+        }
+    }
+
+    public void sortStudentsByID(int courseID) {
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        if (courseNode != null) {
+            sortLinkedList(courseNode.list);
+            System.out.println("Students sorted by ID for course " + courseID + ":");
+            courseNode.list.printList();
+        } else {
+            System.out.println("Course not found!");
+        }
+    }
+
+    public boolean isFullCourse(int courseID) {
+        LinkedList.Node courseNode = coursesList.findNode(courseID);
+        return courseNode != null && courseNode.list.size() >= 30;
+    }
+
+    public boolean isNormalStudent(int studentID) {
+        LinkedList.Node studentNode = studentsList.findNode(studentID);
+        return studentNode != null && studentNode.list.size() >= 2 && studentNode.list.size() <= 7;
+    }
+
 
     public int getLastStudentAdded() {
         return lastStudentAdded;
@@ -51,145 +211,12 @@ public class RegistrationSystem {
         return lastStudentRemovedFromCourse;
     }
 
-    public int getLastCourseWithStudent() { // New getter for lastCourseWithStudent
+    // Getters for the new fields tracking course context
+    public int getLastCourseWithStudent() {
         return lastCourseWithStudent;
     }
-    public int getLastCourseRemoveStudent() { // New getter for lastCourseRemoveStudent
+
+    public int getLastCourseRemoveStudent() {
         return lastCourseRemoveStudent;
-    }
-    public void addStudent(int studentID) {
-        studentsList.add(new LinkedList.Node(studentID));
-        lastStudentAdded = studentID;
-        Main.undoRedo.addAction("add-student");
-    }
-
-    public void addCourse(int courseID) {
-        coursesList.add(new LinkedList.Node(courseID));
-        lastCourseAdded = courseID;
-            Main.undoRedo.addAction("add-course");
-
-    }
-
-    public void removeStudent(int studentID) {
-        studentsList.remove(studentID);
-        lastStudentRemoved = studentID;
-        LinkedList.Node courseHead = coursesList.getHead();
-        while (courseHead != null) {
-            courseHead.list.remove(studentID);
-            courseHead = courseHead.next;
-            Main.undoRedo.addAction("remove-student");
-
-        }
-    }
-
-    public void removeCourse(int courseID) {
-        coursesList.remove(courseID);
-        lastCourseRemoved = courseID; 
-        LinkedList.Node studentHead = studentsList.getHead();
-        while (studentHead != null) {
-            studentHead.list.remove(courseID);
-            studentHead = studentHead.next;
-            Main.undoRedo.addAction("remove-course");
-
-        }
-    }
-
-    public void enrollStudentToCourse(int studentID, int courseID) {
-        LinkedList.Node courseNode = coursesList.findNode(courseID);
-        if (courseNode != null) {
-            courseNode.list.add(studentID);
-            lastStudentAddedToCourse = studentID;
-            lastCourseWithStudent = courseID; // Update lastCourseWithStudent
-            Main.undoRedo.addAction("enroll");
-        }
-    }
-
-    public void removeStudentFromCourse(int studentID, int courseID) {
-        LinkedList.Node courseNode = coursesList.findNode(courseID);
-        if (courseNode != null) {
-            courseNode.list.remove(studentID);
-            lastStudentRemovedFromCourse = studentID;
-            lastCourseRemoveStudent = courseID; // Update lastCourseRemoveStudent
-            Main.undoRedo.addAction("unenroll");
-
-        }
-    }
-
-    public void Print(){
-        System.out.println("Students:");
-        studentsList.printList();
-        
-    }
-
-    public void listCoursesByStudent(int studentID) {
-        LinkedList.Node studentNode = studentsList.findNode(studentID);
-        if (studentNode != null) {
-            System.out.println("Courses for student " + studentID + ":");
-            studentNode.list.printList();
-        } else {
-            System.out.println("Student not found.");
-        }
-    }
-    public void listStudentsByCourse(int courseID) {
-        LinkedList.Node courseNode = coursesList.findNode(courseID);
-        if (courseNode != null) {
-            System.out.println("Students enrolled in course " + courseID + ":");
-            courseNode.list.printList();
-        } else {
-            System.out.println("Course not found!");
-        }
-    }
-    private void SortLinkedList(LinkedList list) {
-        if (list.getHead() == null) return;
-        boolean swapped;
-        do {
-            swapped = false;
-            LinkedList.Node curr = list.getHead();
-            while (curr.next != null) {
-                if (curr.ID > curr.next.ID) {
-                    int temp = curr.ID;
-                    curr.ID = curr.next.ID;
-                    curr.next.ID = temp;
-                    swapped = true;
-                }
-                curr = curr.next;
-            }
-        } while (swapped);
-    }
-    public void SortCoursesByID(int studentID) {
-        LinkedList.Node studentNode = studentsList.findNode(studentID);
-        if (studentNode != null) {
-            SortLinkedList(studentNode.list);
-            System.out.println("Courses sorted by ID for student " + studentID + ":");
-            studentNode.list.printList();
-        } else {
-            System.out.println("Student not found!");
-        }
-    }
-    public void SortStudentsByID(int courseID) {
-        LinkedList.Node courseNode = coursesList.findNode(courseID);
-        if (courseNode != null) {
-            SortLinkedList(courseNode.list);
-            System.out.println("Students sorted by ID for course " + courseID + ":");
-            courseNode.list.printList();
-        } else {
-            System.out.println("Course not found!");
-        }
-    }
-    public boolean isFullCourse(int courseID) {
-        LinkedList.Node courseNode = coursesList.findNode(courseID);
-        if (courseNode != null) {
-            return courseNode.list.size() >= 30;
-        } else {
-            return false;
-        }
-    }
-    public boolean isNormalStudent(int studentID){
-        LinkedList.Node studentNode = studentsList.findNode(studentID);
-        if(studentNode!=null){
-            return (studentNode.list.size() >=2 && studentNode.list.size() <= 7);
-        }else{
-            return false;
-        }
     }
 }

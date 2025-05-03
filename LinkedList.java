@@ -59,12 +59,10 @@ public class LinkedList {
         Node current = head;
         while (current != null) {
             System.out.println(current.ID + " ");
-            System.out.println("Enrollments: ");
             current.list.printList();
             current = current.next;
 
         }
-        System.out.println();
     }
 
     // Remove the first occurrence of a given value
